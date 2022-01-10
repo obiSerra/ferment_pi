@@ -1,19 +1,30 @@
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 # SPDX-License-Identifier: MIT
-
+import sys
 import time
 import board
 import adafruit_dht
 
 
 class Temperature:
-    def __init__(self, pin):
+    def __init__(self, pin=board.D4):
         self.dht_device = adafruit_dht.DHT11(pin)
 
+        print("Temperature init!")
+
     def read(self):
-        temperature_c = self.dht_device.temperature
-        humidity = self.dht_device.humidity
-        return {'temperature': temperature_c, 'humidity': humidity}
+        try:
+            temperature_c = self.dht_device.temperature
+            humidity = self.dht_device.humidity
+            return {'temperature': temperature_c, 'humidity': humidity}
+        except RuntimeError as error:
+            # Errors happen fairly often, DHT's are hard to read, just keep going
+            print(error.args[0])
+            return None
+        except Exception as error:
+            print("exiting")
+            tem.exit()
+            raise error
 
     def exit(self):
         self.dht_device.exit()
@@ -28,25 +39,14 @@ class Temperature:
 
 
 if __name__ == '__main__':
-    tem = Temperature(board.D4)
+    tem = Temperature(pin=board.D4)
 
     while True:
-        try:
-
-            temp_data = tem.read()
-            print(
-                "Temp: {:.1f} C    Humidity: {}% ".format(
-                    temp_data['temperature'], temp_data['humidity']
-                )
+        temp_data = tem.read()
+        print(
+            "Temp: {:.1f} C    Humidity: {}% ".format(
+                temp_data['temperature'], temp_data['humidity']
             )
-
-        except RuntimeError as error:
-            # Errors happen fairly often, DHT's are hard to read, just keep going
-            print(error.args[0])
-            time.sleep(2.0)
-            continue
-        except Exception as error:
-            tem.exit()
-            raise error
+        )
 
         time.sleep(2.0)
