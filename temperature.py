@@ -36,7 +36,7 @@ if __name__ == '__main__':
             temp_data = tem.read()
             print(
                 "Temp: {:.1f} C    Humidity: {}% ".format(
-                    temp_data.temperature, temp_data.humidity
+                    temp_data['temperature'], temp_data['humidity']
                 )
             )
 
