@@ -4,6 +4,7 @@ import datetime
 
 from screen import Screen
 from temperature import Temperature
+from database import save_temperature
 
 
 def run_app():
@@ -13,13 +14,29 @@ def run_app():
     screen.render()
     time.sleep(2)
 
-    time.sleep(2)
+    save_every = 30 * 20
+    from_last_save = save_every
+
     try:
+        temp_data = None
         while True:
+            from_last_save += 1
             temp_data = temp.read()
             if temp_data is not None:
+
+                temperature = temp_data['temperature']
+                humidity = temp_data['humidity']
+
+                if from_last_save > save_every:
+                    print('Saving')
+                    try:
+                        save_temperature(temperature, humidity)
+                        from_last_save = 0
+                    except Exception as err:
+                        print("ERROR in db", err)
+
                 message = "Temp: {:.1f} C \nHumidity: {}% ".format(
-                    temp_data['temperature'], temp_data['humidity']
+                    temperature, humidity
                 )
                 now = datetime.datetime.now()
                 print(message)
