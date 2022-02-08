@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  fermentpi_db_service:
+    image: fermentpi_db
+    ports:
+      - 5432:5432
+
+    environment:
+      - POSTGRES_PASSWORD=testsecretpassword
+      - POSTGRES_USER=testuser
+      - POSTGRES_DB=fermentpi_db
+  
+
+# networks:
+#   local_cluster_network:
