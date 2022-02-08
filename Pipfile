@@ -8,6 +8,8 @@ pillow = "*"
 sqlalchemy = "==1.4.23"
 psycopg2 = "*"
 alembic = "*"
+apscheduler = "*"
+flask = "*"
 
 [dev-packages]
 autopep8 = "*"

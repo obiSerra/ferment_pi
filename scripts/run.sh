@@ -1,5 +1,5 @@
 #!/bin/bash
 
-# docker-compose up -d
+cd /home/pi/fermentpi/ && docker-compose up -d
 
-source .env && python3 src/ferment_pi/main.py
+python3 /home/pi/fermentpi/src/ferment_pi/main.py

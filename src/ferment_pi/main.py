@@ -7,6 +7,38 @@ from temperature import Temperature
 from database import save_temperature
 
 
+# set_scheduler(func=run, seconds=10)
+
+
+
+def run():
+    try:
+        screen = Screen()
+        temp = Temperature()
+        data = None
+        while data is None:
+            data = temp.read()
+
+        temperature = data['temperature']
+        humidity = data['humidity']
+        
+        save_temperature(temperature, humidity)
+
+        message = "Temp: {:.1f} C \nHumidity: {}% ".format(
+            temperature, humidity
+        )
+        now = datetime.datetime.now()
+        screen.new_screen()
+        screen.draw_text(message, font_size=10)
+        screen.draw_text("time: {}".format(now), font_size=8,
+                         position=(0, 50))
+
+        screen.render()
+    finally:
+        temp.exit()
+        GPIO.cleanup()
+
+
 def run_app():
     screen = Screen()
     temp = Temperature()
@@ -39,7 +71,6 @@ def run_app():
                     temperature, humidity
                 )
                 now = datetime.datetime.now()
-                print(message)
                 screen.new_screen()
                 screen.draw_text(message, font_size=10)
                 screen.draw_text("time: {}".format(now), font_size=8,

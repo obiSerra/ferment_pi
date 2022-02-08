@@ -1,18 +1,23 @@
 import os
+import sys
 from datetime import datetime
 
 from contextlib import contextmanager
 from sqlalchemy import create_engine
-from sqlalchemy.exc import OperationalError, SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, String, DateTime, Integer
-from sqlalchemy.dialects.postgresql import JSON
 
 
 BaseModel = declarative_base()
 
-url = os.environ.get('DB_URL')
+url = os.environ.get(
+    'DB_URL', 'postgresql://testuser:testsecretpassword@fermentpi_db:5432/testdatabase')
+
+if url is None:
+    print("ERROR missing DB_URL env")
+    sys.exit(1)
 
 engine = create_engine(url, pool_pre_ping=True)
 
@@ -46,6 +51,22 @@ def save_temperature(temperature, humidity):
 
             session.add(batch)
             session.commit()
+        except SQLAlchemyError as err:
+            session.rollback()
+            raise err
+
+
+def get_last_temperature():
+    with get_session() as session:
+        try:
+            obj = session.query(Temperature).order_by(
+                Temperature.created_time.desc()).first()
+
+            if obj is None:
+                return None
+
+            return {'id': obj.id, 'temperature': obj.temperature,
+                    'humidity': obj.humidity, 'date': obj.created_time}
         except SQLAlchemyError as err:
             session.rollback()
             raise err
