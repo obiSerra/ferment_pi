@@ -12,6 +12,7 @@ apscheduler = "*"
 fastapi = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 ferment-pi = {editable = true, path = "."}
+tenacity = "*"
 
 [dev-packages]
 autopep8 = "*"
