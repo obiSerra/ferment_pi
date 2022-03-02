@@ -1,90 +1,31 @@
-import time
-import RPi.GPIO as GPIO
-import datetime
+from os import path
+from typing import Optional
 
-from screen import Screen
-from temperature import Temperature
-from database import save_temperature
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
+from ferment_pi.database import get_last_temperature
 
-# set_scheduler(func=run, seconds=10)
+app = FastAPI()
 
-
-
-def run():
-    try:
-        screen = Screen()
-        temp = Temperature()
-        data = None
-        while data is None:
-            data = temp.read()
-
-        temperature = data['temperature']
-        humidity = data['humidity']
-        
-        save_temperature(temperature, humidity)
-
-        message = "Temp: {:.1f} C \nHumidity: {}% ".format(
-            temperature, humidity
-        )
-        now = datetime.datetime.now()
-        screen.new_screen()
-        screen.draw_text(message, font_size=10)
-        screen.draw_text("time: {}".format(now), font_size=8,
-                         position=(0, 50))
-
-        screen.render()
-    finally:
-        temp.exit()
-        GPIO.cleanup()
+FRONTEND_PATH = path.join(path.dirname(__file__),
+                          "./frontend_build")
 
 
-def run_app():
-    screen = Screen()
-    temp = Temperature()
-    screen.draw_text('FermentPi', position=(30, 20))
-    screen.render()
-    time.sleep(2)
-
-    save_every = 30 * 20
-    from_last_save = save_every
-
-    try:
-        temp_data = None
-        while True:
-            from_last_save += 1
-            temp_data = temp.read()
-            if temp_data is not None:
-
-                temperature = temp_data['temperature']
-                humidity = temp_data['humidity']
-
-                if from_last_save > save_every:
-                    print('Saving')
-                    try:
-                        save_temperature(temperature, humidity)
-                        from_last_save = 0
-                    except Exception as err:
-                        print("ERROR in db", err)
-
-                message = "Temp: {:.1f} C \nHumidity: {}% ".format(
-                    temperature, humidity
-                )
-                now = datetime.datetime.now()
-                screen.new_screen()
-                screen.draw_text(message, font_size=10)
-                screen.draw_text("time: {}".format(now), font_size=8,
-                                 position=(0, 50))
-
-                screen.render()
-
-            time.sleep(2)
-    except KeyboardInterrupt:
-        temp.exit()
-        print("ctrl + c:")
-    finally:
-        GPIO.cleanup()
+@app.get('/api/temperature')
+def last_temperature():
+    temperature = get_last_temperature()
+    return {'temperature': temperature}
 
 
-if __name__ == '__main__':
-    run_app()
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
+
+
+@app.get("/items/{item_id}")
+def read_item(item_id: int, q: Optional[str] = None):
+    return {"item_id": item_id, "q": q}
+
+
+app.mount("/", StaticFiles(directory=FRONTEND_PATH, html=True))

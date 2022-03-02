@@ -9,7 +9,9 @@ sqlalchemy = "==1.4.23"
 psycopg2 = "*"
 alembic = "*"
 apscheduler = "*"
-flask = "*"
+fastapi = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+ferment-pi = {editable = true, path = "."}
 
 [dev-packages]
 autopep8 = "*"

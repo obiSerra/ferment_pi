@@ -1,17 +1,35 @@
+import os
+
+from flask import Flask, send_from_directory
+from flask.helpers import safe_join
+
 from database import get_last_temperature
 
-import subprocess
-
-from flask import Flask
-
-app = Flask(__name__)
+app = Flask(__name__, static_url_path=None)
 
 
-# set_scheduler(func=run, seconds=10)
-# subprocess.Popen(["python3","-r","some.file"])
+static = safe_join(
+    os.path.dirname(__file__), 'frontend_build')
 
+app.static_url_path = '/'
+app.root_path = static
 
 @app.route('/')
+def home():
+    print(static)
+    return send_from_directory(static, 'index.html')
+
+
+@app.route('/<path:path>')
+def static_url(path):
+    print("STATIC", path)
+    if os.path.isdir(safe_join(static, path)):
+        path = os.path.join(path, 'index.html')
+    print("STATIC!!!!", path)
+    return send_from_directory(static, path)
+
+
+@app.route('/api/temperature')
 def hello():
     temperature = get_last_temperature()
     return {'temperature': temperature}
