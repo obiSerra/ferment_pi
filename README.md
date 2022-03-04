@@ -25,6 +25,12 @@ To run the dev version, run
 $ yarn start
 ```
 
+### Test
+To run the frontend unit-tests
+```
+$ yarn test
+```
+
 ### Build
 
 To build run
@@ -37,7 +43,7 @@ $ yarn build
 Install the dependencies
 
 ```
-$ pipenv install
+$ pipenv install --dev
 ```
 
 Activate the virtual environment
@@ -46,9 +52,22 @@ Activate the virtual environment
 $ pipenv shell
 ```
 
+### Testing
+To run the backend unit-tests run:
+```
+$ pytest
+```
+_(single run)_
+or
+
+```
+$ ptw
+```
+_(watcher)_
+
 ### Running
 
-(note) To run the server, you need to build the frontend first
+_(note:)_ To run the server, you need to build the frontend first
 
 To run the FastAPI server, run
 ```
