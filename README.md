@@ -3,15 +3,20 @@
 
 
 ## Database
+Navigate to `db/`
 
-The db can be started with the 
+To create the image for the db run:
+```
+$ docker build -t fermentpi_db . --build-arg REGISTRY=docker.io/library
+```
+Then navigate back to the root directory and run:
 ```
 $ docker-compose up
 ```
 
 ## Frontend
 
-Navigate to `frontend/`
+Navigate to `frontend/ferment-pi`
 
 Install the dependencies
 
