@@ -16,6 +16,9 @@ tenacity = "*"
 
 [dev-packages]
 autopep8 = "*"
+requests = "*"
+pytest = "*"
+pytest-watch = "*"
 
 [requires]
 python_version = "3.9"
