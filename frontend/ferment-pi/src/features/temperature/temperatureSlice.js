@@ -24,7 +24,6 @@ export const temperatureSlice = createSlice({
         })
         .addCase(lastTempAction.fulfilled, (state, action) => {
           state.status = 'idle';
-          console.log("ACTION", action.payload.temperature)
           state.lastTemp = action.payload.temperature;
         });
     }
