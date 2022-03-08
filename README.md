@@ -14,6 +14,12 @@ Then navigate back to the root directory and run:
 $ docker-compose up
 ```
 
+To run the migration run
+```
+$ python ./src/ferment_pi/pre_start.py
+```
+
+
 ## Frontend
 
 Navigate to `frontend/ferment-pi`

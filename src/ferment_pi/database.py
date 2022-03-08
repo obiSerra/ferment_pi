@@ -1,20 +1,19 @@
 import os
 import sys
+from contextlib import contextmanager
 from datetime import datetime
 
-from contextlib import contextmanager
-from sqlalchemy import create_engine
+from sqlalchemy import Column, DateTime, Integer, String, create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, String, DateTime, Integer
-
+from sqlalchemy.sql import func
 
 BaseModel = declarative_base()
 
 url = os.environ.get(
     'DB_URL', 'postgresql://testuser:testsecretpassword@fermentpi_db:5432/testdatabase')
-
+print(url)
 if url is None:
     print("ERROR missing DB_URL env")
     sys.exit(1)
@@ -61,10 +60,8 @@ def get_last_temperature():
         try:
             obj = session.query(Temperature).order_by(
                 Temperature.created_time.desc()).first()
-
             if obj is None:
                 return None
-
             return {'id': obj.id, 'temperature': obj.temperature,
                     'humidity': obj.humidity, 'date': obj.created_time}
         except SQLAlchemyError as err:
