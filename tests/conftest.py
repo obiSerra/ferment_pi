@@ -22,5 +22,6 @@ def mock_get_session(mocker):
     mock_entry.humidity = "33"
     mock_entry.created_time = "2022-03-08T17:45:12.586682"
 
-    mock_ses().__enter__().query().order_by().first.return_value = mock_entry
+    (mock_ses.return_value.__enter__.return_value.query.return_value
+     .order_by.return_value.first.return_value) = mock_entry
     return mock_ses
